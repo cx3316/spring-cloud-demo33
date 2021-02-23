@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--命名空间为指定接口的全类名-->
+<mapper namespace="cn.it.dao.DepartmentMapper">
+    <resultMap id="deptMap" type="cn.it.entity.Department">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <!--id为接口中的方法名-->
+    <select id="listAllDepartment" resultMap="deptMap">
+        select * from department
+    </select>
+    <select id="listDeptByConditions" resultMap="deptMap">
+        select * from department
+        <trim prefix="where" suffixOverrides="and">
+            <if test="id != null and id > -1">
+                id = #{id} and
+            </if>
+            <if test="name != null and name != ''">
+                name like concat('#', #{name},'#')
+            </if>
+        </trim>
+    </select>
+    <select id="countDeptByConditions" resultType="int">
+        select count(id) from department
+        <trim prefix="where" suffixOverrides="and">
+            <if test="id != null and id > -1">
+                id = #{id} and
+            </if>
+            <if test="name != null and name != ''">
+                name like concat('#', #{name},'#')
+            </if>
+        </trim>
+    </select>
+    <insert id="addDepartment" useGeneratedKeys="true" keyProperty="id" parameterType="cn.it.entity.Department">
+        insert into department
+        values(#{name})
+    </insert>
+    <delete id="deleteDepartmentById" parameterType="integer">
+        delete from department
+        where id = #{id}
+    </delete>
+    <update id="updateDepartment" parameterType="cn.it.entity.Department">
+        update department
+        <trim prefix="set" suffixOverrides=",">
+            <if test="name != null and name != ''">
+                name = #{name} ,
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+</mapper>
